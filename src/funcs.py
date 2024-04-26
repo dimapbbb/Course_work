@@ -28,15 +28,48 @@ class Operation():
     def __str__(self):
         return f"""
                 {self.reformat_date()} {self.description}
-                {self.receiving_sender()}{self.to}
+                {self.receiving_sender()}{self.receiving_recipient()}
                 {self.amount}  
                 """
 
     def reformat_date(self):
+        """
+        date to readble format
+        """
         return f"{self.date[8:10]}.{self.date[5:7]}.{self.date[:4]}"
 
+    def get_number(self, string):
+        """
+        getting the card name and number
+        """
+        _ = string.split()
+        number = _.pop()
+        name = " ".join(_)
+        return name, number
+
     def receiving_sender(self):
+        """
+        receiving the sender if any
+        """
         if "from" in self.operation.keys():
-            return f"{self.operation['from']} -> "
+            name, number = self.get_number(self.operation['from'])
+            return f"{name} {self.security(number)} -> "
         else:
             return ""
+
+    def receiving_recipient(self):
+        """
+        receiving the recepient
+        """
+        name, number = self.get_number(self.to)
+        return f"{name} {self.security(number)}"
+
+    def security(self, number):
+        """
+        hiding account numbers
+        """
+        if len(number) == 20:
+            return f"**{number[-4:]}"
+        else:
+            return f"{number[:4]} {number[4:6]}** **** {number[-4:]}" 
+        
