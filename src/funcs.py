@@ -3,73 +3,42 @@
 import json
 
 
-def get_data(file_name, count_operations=5):
+def get_json(file_name):
     """
-    getting the last 5 operation from json file, quantity can be customized
+    Чтение json
     """
-    with open(file_name, "r", encoding="utf-8") as file:          # read file json
-        data = json.load(file)
+    with open(file_name, "r", encoding="utf-8") as file:
+        return json.load(file)
 
-    data = [row for row in data if len(row) > 5]                  # removing broken data
-    data = filter(lambda x: x["state"] == "EXECUTED", data)       # filter by key EXECUTED
-    data = sorted(data, key=lambda x: x["date"], reverse=True)    # sort by date
+
+def rm_broken_data(data):
+    """
+    Удвляем сломанные данные
+    """
+    return [row for row in data if len(row) > 5]
     
-    return data[:count_operations]
+
+def filter_by_state(data, key="EXECUTED"):
+    """
+    Фильтр выполненых операций
+    """
+    return filter(lambda x: x["state"] == key, data)
 
 
-class Operation():
-    def __init__(self, operation):
-        self.operation = operation
-        self.date = operation["date"]
-        self.description = operation["description"]
-        self.to = operation["to"]
-        self.amount = operation["operationAmount"]["amount"] + " " + operation["operationAmount"]["currency"]["name"]
-        
-    def __str__(self):
-        return f"""
-                {self.reformat_date()} {self.description}
-                {self.receiving_sender()}{self.receiving_recipient()}
-                {self.amount}  
-                """
+def sort_by_date(data, parametr="date", direction=True):
+    """
+    Упорядочивает операции по дате, в теории можно добавить настрйку по сумме перевода
+    """
+    return sorted(data, key=lambda x: x[parametr], reverse=direction)
+    
 
-    def reformat_date(self):
-        """
-        date to readble format
-        """
-        return f"{self.date[8:10]}.{self.date[5:7]}.{self.date[:4]}"
+def get_number_operation(data, count=5):
+    """
+    Выдает количество операций
+    """
+    return data[:count]
 
-    def get_number(self, string):
-        """
-        getting the card name and number
-        """
-        _ = string.split()
-        number = _.pop()
-        name = " ".join(_)
-        return name, number
 
-    def receiving_sender(self):
-        """
-        receiving the sender if any
-        """
-        if "from" in self.operation.keys():
-            name, number = self.get_number(self.operation['from'])
-            return f"{name} {self.security(number)} -> "
-        else:
-            return ""
 
-    def receiving_recipient(self):
-        """
-        receiving the recepient
-        """
-        name, number = self.get_number(self.to)
-        return f"{name} {self.security(number)}"
 
-    def security(self, number):
-        """
-        hiding account numbers
-        """
-        if len(number) == 20:
-            return f"**{number[-4:]}"
-        else:
-            return f"{number[:4]} {number[4:6]}** **** {number[-4:]}" 
         
