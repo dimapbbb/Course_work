@@ -1,7 +1,7 @@
 #! /home/dimapb/.cache/pypoetry/virtualenvs/src-PhVsYnOQ-py3.10/bin/python
 from os.path import dirname, join
-from funcs import get_json, rm_broken_data, filter_by_state, sort_by_date, get_number_operation  
-from utils import output
+from src.funcs import get_json, rm_broken_data, filter_by_state, sort_by_date, get_number_operation
+from src.utils import output
 
 
 def main():
@@ -21,5 +21,6 @@ def main():
     for operation in outputable_operations:
         print(output(operation))
         print()
+
 
 main()

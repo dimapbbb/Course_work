@@ -37,8 +37,3 @@ def get_number_operation(data, count=5):
     Выдает количество операций
     """
     return data[:count]
-
-
-
-
-        
