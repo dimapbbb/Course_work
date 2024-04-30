@@ -24,3 +24,12 @@ def security(card_number):
         return f"{card} **{number[-4:]}"
     else:
         return f"{card} {number[:4]} {number[4:6]}** **** {number[-4:]}"
+
+
+def output(row):
+    """
+    Вывод операции в читаемом формате
+    """
+    return f"""{format_datetime(row['date'])} {row['description']}
+{security(row['from']) + ' -> ' if 'from' in row.keys() else ''}{security(row['to'])}
+{get_amount(row['operationAmount'])}"""
